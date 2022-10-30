@@ -1,10 +1,9 @@
 from flask import jsonify, request
 from backendproj import app
 from datetime import datetime
-from sort_defs import sort_for_category, sort_user_records
-from data_file import USERS,CATEGORIES,RECORDS
-from counters import user_id_counter_plus_one, categories_id_counter_plus_one, records_id_counter_plus_one
-
+from backendproj.counters import user_id_counter_plus_one, categories_id_counter_plus_one, records_id_counter_plus_one
+from backendproj.sort_defs import sort_for_category, sort_user_records
+from backendproj.data_file import USERS,CATEGORIES,RECORDS
 
 @app.route("/categories")
 def get_categories():
@@ -27,7 +26,7 @@ category = CATEGORIES[0]
 
 @app.route(f"/user{user2['User id']}recordsincategory{category['Category id']}")
 def get_user_records_in_category():
-    global user2, category, RECORDS
+    global user2, category
     username = user2["User name"]
     categoryname = category["Category name"]
     return jsonify({f"User {username} records in category {categoryname}":
