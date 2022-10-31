@@ -30,7 +30,7 @@ def check_user_id_for_get_it():
 def check_user_and_category_id_for_get_it():
     global user_id_for_checking_records_in_category, category_id_for_checking_records
     user_and_category_data = request.get_json()
-    if (user_and_category_data["Uset id"] <= len(USERS)) and (user_and_category_data["Category id"] <= len(CATEGORIES)):
+    if (user_and_category_data["User id"] <= len(USERS)) and (user_and_category_data["Category id"] <= len(CATEGORIES)):
         user_id_for_checking_records_in_category = user_and_category_data["User id"]
         category_id_for_checking_records = user_and_category_data["Category id"]
         return jsonify({"Status": "ok"})
