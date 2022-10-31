@@ -86,8 +86,7 @@ def create_record():
     request_data = request.get_json()
     if (request_data["User id"] > USERS[-1]["User id"]) or \
             (request_data["Category id"] > CATEGORIES[-1]["Category id"]):
-
-        return IndexError
+        return jsonify({"Status": "User does not exist"})
     else:
         request_data["Record id"] = records_id_counter_plus_one()
         now = datetime.now()
