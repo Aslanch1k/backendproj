@@ -3,34 +3,64 @@ from backendproj import app
 from datetime import datetime
 from backendproj.counters import user_id_counter_plus_one, categories_id_counter_plus_one, records_id_counter_plus_one
 from backendproj.sort_defs import sort_for_category, sort_user_records
-from backendproj.data_file import USERS,CATEGORIES,RECORDS
+from backendproj.data_file import USERS, CATEGORIES, RECORDS
+
+user_id_for_checking_records = 1
+user_id_for_checking_records_in_category = 1
+category_id_for_checking_records = 1
+
 
 @app.route("/categories")
 def get_categories():
     return jsonify({"Categories": CATEGORIES})
 
 
-user1 = USERS[0]
+@app.route("/userrecords", methods=['POST'])
+def check_user_id_for_get_it():
+    global user_id_for_checking_records
+    userdata = request.get_json()
+    if userdata["User id"] <= len(USERS):
+        user_id_for_checking_records = userdata["User id"]
+        return jsonify({"Status": "ok"})
+    else:
+        return jsonify({"Status": "User does not exist"})
 
 
-@app.route(f"/user{user1['User id']}records")
+@app.route("/userrecordsincategory", methods=['POST'])
+def check_user_and_category_id_for_get_it():
+    global user_id_for_checking_records_in_category, category_id_for_checking_records
+    user_and_category_data = request.get_json()
+    if (user_and_category_data["Uset id"] <= len(USERS)) and (user_and_category_data["Category id"] <= len(CATEGORIES)):
+        user_id_for_checking_records_in_category = user_and_category_data["User id"]
+        category_id_for_checking_records = user_and_category_data["Category id"]
+        return jsonify({"Status": "ok"})
+    else:
+        return jsonify({"Status": "User or category does not exist"})
+
+
+@app.route(f"/userrecordsbyid")
 def get_user_records():
-    global user1
-    username = user1["User name"]
-    return jsonify({f"User {username} records": sort_user_records(RECORDS, user1)})
+    user = USERS[user_id_for_checking_records - 1]
+    username = user["User name"]
+    userid = user["User id"]
+    return jsonify({f"User name: {username} | "
+                    f"User id: {userid} | "
+                    f"User records": sort_user_records(RECORDS, user)})
 
 
-user2 = USERS[1]
-category = CATEGORIES[0]
-
-
-@app.route(f"/user{user2['User id']}recordsincategory{category['Category id']}")
+@app.route(f"/userrecordsincategory")
 def get_user_records_in_category():
-    global user2, category
-    username = user2["User name"]
+    user = USERS[user_id_for_checking_records_in_category - 1]
+    category = CATEGORIES[category_id_for_checking_records - 1]
+    username = user["User name"]
+    userid = user["User id"]
+    categoryid = category["Category id"]
     categoryname = category["Category name"]
-    return jsonify({f"User {username} records in category {categoryname}":
-                        sort_for_category(category, sort_user_records(RECORDS, user2))})
+    return jsonify({f"User name: {username} | "
+                    f"User id: {userid} | "
+                    f"Category: {categoryname} | "
+                    f"Category id: {categoryid} | "
+                    f"Users records in category: ": sort_for_category(category, sort_user_records(RECORDS, user))})
 
 
 @app.route("/category", methods=['POST'])
