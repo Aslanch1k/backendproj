@@ -1,6 +1,7 @@
 FROM python:3.10.6-slim
 
 ENV FLASK_APP=backendproj
+ENV FLASK_DEBUG=$FLASK_DEBUG
 
 COPY requirements.txt /opt
 

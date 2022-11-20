@@ -1,10 +1,11 @@
-from backendproj.counters import user_id_counter_plus_one, categories_id_counter_plus_one, records_id_counter_plus_one
+from backendproj.counters import user_id_counter_plus_one, categories_id_counter_plus_one, records_id_counter_plus_one, \
+    user_id_counter, categories_id_counter, records_id_counter
 from datetime import datetime
 
 
 USERS = [
     {
-        "User id": user_id_counter_plus_one(),
+        "User id": user_id_counter,
         "User name": "Oleg",
     },
     {
@@ -21,7 +22,7 @@ USERS = [
 
 CATEGORIES = [
     {
-        "Category id": categories_id_counter_plus_one(),
+        "Category id": categories_id_counter,
         "Category name": "Shoes",
     },
     {
@@ -39,7 +40,7 @@ now = datetime.now()
 
 
 RECORDS = [
-    {"Record id": records_id_counter_plus_one(),
+    {"Record id": records_id_counter,
      "User id": USERS[0]["User id"],
      "Category id": CATEGORIES[0]["Category id"],
      "Date and time of record": now.strftime("%d/%m/%Y %H:%M:%S"),
