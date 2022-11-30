@@ -5,6 +5,7 @@ from backendproj.db import db
 from backendproj.resources.user import blp as UserBlueprint
 from backendproj.resources.category import blp as CategoryBlueprint
 from backendproj.resources.record import blp as RecordBlueprint
+from backendproj.resources.currency import blp as CurrencyBlueprint
 
 user_id_for_checking_records = 1
 user_id_for_checking_records_in_category = 1
@@ -29,3 +30,5 @@ with app.app_context():
 api.register_blueprint(UserBlueprint)
 api.register_blueprint(CategoryBlueprint)
 api.register_blueprint(RecordBlueprint)
+api.register_blueprint(CurrencyBlueprint)
+

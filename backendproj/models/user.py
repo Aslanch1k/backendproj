@@ -12,3 +12,4 @@ class UserModel(db.Model):
         back_populates="user",
         lazy="dynamic",
     )
+
