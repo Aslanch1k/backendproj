@@ -15,7 +15,7 @@ blp = Blueprint("currency", __name__, description="Operations on currency")
 class Currency(MethodView):
     @blp.response(200, CurrencySchema)
     def get(self, currency_id):
-        currency = UserModel.query.get_or_404(currency_id)
+        currency = CurrencyModel.query.get_or_404(currency_id)
         return currency
 
 
@@ -24,7 +24,7 @@ class CurrencyList(MethodView):
 
     @blp.response(200, CurrencySchema(many=True))
     def get(self):
-        return UserModel.query.all()
+        return CurrencyModel.query.all()
 
     @blp.arguments(CurrencySchema)
     @blp.response(200, CurrencySchema)
