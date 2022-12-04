@@ -18,16 +18,6 @@ class User(MethodView):
         return user
 
 
-    # def delete(self, user_id):
-    #     user_id = int(user_id)
-    #     try:
-    #         deleted_user = USERS[user_id]
-    #         del USERS[user_id]
-    #         return deleted_user
-    #     except KeyError:
-    #         abort(404, message="User not found")
-
-
 @blp.route("/user")
 class UserList(MethodView):
 
@@ -38,6 +28,8 @@ class UserList(MethodView):
     @blp.arguments(UserSchema)
     @blp.response(200, UserSchema)
     def post(self, user_data):
+        if "currency_id" not in user_data:
+            user_data["currency_id"] = 1
         user = UserModel(**user_data)
         try:
             db.session.add(user)

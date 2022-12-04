@@ -4,8 +4,7 @@ from flask.views import MethodView
 from flask_smorest import abort
 from backendproj.db import db
 from backendproj.models.currency import CurrencyModel
-from backendproj.models.user import UserModel
-from backendproj.schemas import UserSchema, CurrencySchema
+from backendproj.schemas import CurrencySchema
 import backendproj.currency as cur
 
 blp = Blueprint("currency", __name__, description="Operations on currency")
@@ -29,6 +28,22 @@ class CurrencyList(MethodView):
     @blp.arguments(CurrencySchema)
     @blp.response(200, CurrencySchema)
     def post(self, currency_data):
+
+        if not db.session.query(CurrencyModel).filter_by(name="USD"):
+            usd_data = {
+                "name": "USD",
+                "currency_to_usd": 1,
+            }
+            usd = CurrencyModel(**usd_data)
+            try:
+                db.session.add(usd)
+                db.session.commit()
+            except IntegrityError:
+                abort(
+                    400,
+                    message="This currency already exists"
+                )
+
         currency_convert = cur.Currency(currency_data["name"])
         currency_data["currency_to_usd"] = currency_convert.return_currency_to_USD()
         currency = CurrencyModel(**currency_data)

@@ -19,15 +19,6 @@ class Category(MethodView):
         category = CategoryModel.query.get_or_404(category_id)
         return category
 
-    # def delete(self, category_id):
-    #     category_id = int(category_id)
-    #     try:
-    #         deleted_category = CATEGORIES[category_id]
-    #         del CATEGORIES[category_id]
-    #         return deleted_category
-    #     except KeyError:
-    #         abort(404, message="Category not found")
-
 
 @blp.route("/category")
 class CategoryList(MethodView):
