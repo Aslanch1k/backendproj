@@ -21,6 +21,7 @@ class RecordSchema(Schema):
     id = fields.Int(dump_only=True)
     user_id = fields.Int(required=True)
     category_id = fields.Int(required=True)
+    currency_id = fields.Int(required=False)
     sum = fields.Float(required=True)
 
 

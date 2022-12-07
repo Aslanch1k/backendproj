@@ -13,3 +13,9 @@ class CurrencyModel(db.Model):
         back_populates="currency",
         lazy="dynamic",
     )
+
+    record = db.relationship(
+        "RecordModel",
+        back_populates="currency",
+        lazy="dynamic"
+    )

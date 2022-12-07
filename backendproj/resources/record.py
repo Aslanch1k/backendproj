@@ -3,8 +3,10 @@ from flask.views import MethodView
 from flask_smorest import abort
 from backendproj.db import db
 from sqlalchemy.exc import IntegrityError
-
-from backendproj.models import RecordModel
+from backendproj.models.record import RecordModel
+from backendproj.models.category import CategoryModel
+from backendproj.models.currency import CurrencyModel
+from backendproj.models.user import UserModel
 from backendproj.schemas import RecordSchema, RecordQuerySchema
 
 blp = Blueprint("record", __name__, description="Operations on record")
@@ -16,15 +18,6 @@ class Record(MethodView):
     def get(self, record_id):
         record = RecordModel.query.get_or_404(record_id)
         return record
-
-    # def delete(self, record_id):
-    #     record_id = int(record_id)
-    #     try:
-    #         deleted_record = RECORDS[record_id]
-    #         del RECORDS[record_id]
-    #         return deleted_record
-    #     except KeyError:
-    #         abort(404, message="Record not found")
 
 
 @blp.route("/record")
@@ -51,13 +44,34 @@ class RecordList(MethodView):
     @blp.arguments(RecordSchema)
     @blp.response(200, RecordSchema)
     def post(self, record_data):
-        record = RecordModel(**record_data)
-        try:
-            db.session.add(record)
-            db.session.commit()
-        except IntegrityError:
+        if "currency_id" not in record_data:
+            record_data["currency_id"] = UserModel.query.with_entities(UserModel.currency_id)\
+                .filter_by(id=record_data["user_id"]).scalar()
+
+        if not db.session.query(db.exists().where(CurrencyModel.id == record_data["currency_id"])).scalar():
             abort(
                 400,
-                message="Error while creating record"
+                message="This currency are not available now"
             )
-        return record
+        if not db.session.query(db.exists().where(UserModel.id == record_data["user_id"])).scalar():
+            abort(
+                400,
+                message="This user are not exist"
+            )
+        if not db.session.query(db.exists().where(CategoryModel.id == record_data["category_id"])).scalar():
+            abort(
+                400,
+                message="This category are not exist"
+            )
+        else:
+            record = RecordModel(**record_data)
+
+            try:
+                db.session.add(record)
+                db.session.commit()
+            except IntegrityError:
+                abort(
+                    400,
+                    message="Error while creating record"
+                )
+            return record
