@@ -28,8 +28,7 @@ class CurrencyList(MethodView):
     @blp.arguments(CurrencySchema)
     @blp.response(200, CurrencySchema)
     def post(self, currency_data):
-
-        if not db.session.query(CurrencyModel).filter_by(name="USD"):
+        if not db.session.query(db.exists().where(CurrencyModel.name == 'USD')).scalar():
             usd_data = {
                 "name": "USD",
                 "currency_to_usd": 1,

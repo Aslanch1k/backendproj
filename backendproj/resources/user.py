@@ -3,6 +3,7 @@ from flask_smorest import Blueprint
 from flask.views import MethodView
 from flask_smorest import abort
 from backendproj.db import db
+from backendproj.models.currency import CurrencyModel
 from backendproj.models.user import UserModel
 from backendproj.schemas import UserSchema
 
@@ -30,13 +31,19 @@ class UserList(MethodView):
     def post(self, user_data):
         if "currency_id" not in user_data:
             user_data["currency_id"] = 1
-        user = UserModel(**user_data)
-        try:
-            db.session.add(user)
-            db.session.commit()
-        except IntegrityError:
+        if not db.session.query(db.exists().where(CurrencyModel.id == user_data["currency_id"])).scalar():
             abort(
                 400,
-                message="User with this name already exists"
+                message="This currency are not available now"
             )
+        else:
+            try:
+                user = UserModel(**user_data)
+                db.session.add(user)
+                db.session.commit()
+            except IntegrityError:
+                abort(
+                    400,
+                    message="User with this name already exists"
+                )
         return user
