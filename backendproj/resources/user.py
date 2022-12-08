@@ -29,6 +29,20 @@ class UserList(MethodView):
     @blp.arguments(UserSchema)
     @blp.response(200, UserSchema)
     def post(self, user_data):
+        if not db.session.query(db.exists().where(CurrencyModel.name == 'USD')).scalar():
+            usd_data = {
+                "name": "USD",
+                "currency_to_usd": 1,
+            }
+            usd = CurrencyModel(**usd_data)
+            try:
+                db.session.add(usd)
+                db.session.commit()
+            except IntegrityError:
+                abort(
+                    400,
+                    message="This currency already exists"
+                )
         if "currency_id" not in user_data:
             user_data["currency_id"] = 1
         if not db.session.query(db.exists().where(CurrencyModel.id == user_data["currency_id"])).scalar():
